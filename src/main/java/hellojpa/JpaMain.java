@@ -18,11 +18,13 @@ public class JpaMain {
 
             // 영속
 
-            Member member = new Member(200L, "member200");
-            em.persist(member);
+            Member member = em.find(Member.class, 150L);
+            member.setName("AAAAA");
 
-            em.flush(); // insert 쿼리 커밋 전에 볼 수 있음
-            // flush 해도 1차 캐시는 지워지지 않음
+//            em.detach(member); // 영속성 컨텍스트에서 member와 관련된 모든게 다 빠짐 = 준영속 상태
+            em.clear(); // 영속성 컨텍스트 비움
+
+            Member member2 = em.find(Member.class, 150L);
 
             System.out.println("====================");
 
