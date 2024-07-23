@@ -16,17 +16,12 @@ public class JpaMain {
 
         try {
 
-            // 영속
+            Member member = new Member();
+            member.setId(3L);
+            member.setUsername("C");
+            member.setRoleType(RoleType.GUEST);
 
-            Member member = em.find(Member.class, 150L);
-            member.setName("AAAAA");
-
-//            em.detach(member); // 영속성 컨텍스트에서 member와 관련된 모든게 다 빠짐 = 준영속 상태
-            em.clear(); // 영속성 컨텍스트 비움
-
-            Member member2 = em.find(Member.class, 150L);
-
-            System.out.println("====================");
+            em.persist(member);
 
             tx.commit();
         } catch (Exception e) {
