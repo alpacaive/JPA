@@ -19,6 +19,11 @@ public class Team {
     @OneToMany(mappedBy = "team") // member의 team에 매핑 되어있다는 뜻, 조회만 가능, 연관관계 주인은 Member의 team
     private List<Member> members = new ArrayList<>();
 
+    public void addMember(Member member) {
+        member.setTeam(this);
+        members.add(member);
+    }
+
     public Long getId() {
         return id;
     }
@@ -42,4 +47,5 @@ public class Team {
     public void setMembers(List<Member> members) {
         this.members = members;
     }
+
 }
