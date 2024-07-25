@@ -3,9 +3,9 @@ package hellojpa;
 import jakarta.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn // DTYPE 컬럼 생김, 디폴트값은 엔티티명 Movie, Album, Book
-public class Item {
+public abstract class Item { // 모든 전략에서 추상 클래스로 만드는게 맞았는데 까먹고 이제 만든거임
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_seq_gen")
