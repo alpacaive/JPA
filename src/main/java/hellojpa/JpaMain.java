@@ -1,39 +1,42 @@
-//package hellojpa;
-//
-//import jakarta.persistence.*;
-//
-//import java.util.List;
-//
-//public class JpaMain {
-//
-//    public static void main(String[] args) {
-//
-//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
-//        EntityManager em = emf.createEntityManager();
-//        EntityTransaction tx = em.getTransaction(); // JPA의 모든 데이터 변경은 트랜잭션 안에서 되어야 한다
-//
-//        tx.begin();
-//
-//        try {
-//
-//            Member member = new Member();
-//            member.setUsername("member1");
-//
-//            em.persist(member);
-//
-//            Team team = new Team();
-//            team.setName("teamA");
-//            team.getMembers().add(member);
-//
-//            em.persist(team);
-//
-//            tx.commit();
-//        } catch (Exception e) {
-//            tx.rollback();
-//        } finally {
-//            em.close();
-//        }
-//
-//        emf.close();
-//    }
-//}
+package hellojpa;
+
+import jakarta.persistence.*;
+
+import java.util.List;
+
+public class JpaMain {
+
+    public static void main(String[] args) {
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction(); // JPA의 모든 데이터 변경은 트랜잭션 안에서 되어야 한다
+
+        tx.begin();
+
+        try {
+
+            Movie movie = new Movie();
+            movie.setDirector("aaaa");
+            movie.setActor("bbbb");
+            movie.setName("바람과 함께 사라지다");
+            movie.setPrice(10000);
+
+            em.persist(movie);
+
+            em.flush();
+            em.clear();
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMovie = " + findMovie);
+
+            tx.commit();
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+        emf.close();
+    }
+}
