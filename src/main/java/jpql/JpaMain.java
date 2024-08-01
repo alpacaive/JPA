@@ -3,6 +3,7 @@ package jpql;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class JpaMain {
 
@@ -22,30 +23,37 @@ public class JpaMain {
 
             em.persist(member);
 
-//            // TypeQuery, Query
-//            TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
-//            TypedQuery<String> query2 = em.createQuery("select m.username from Member m", String.class);
-//            Query query3 = em.createQuery("select m.username, m.age from Member m"); // (age = int, username = String) 타입이 여러개여서 TypeQuery 못쓴다
+            em.flush();
+            em.clear();
 
-//            // 결과 조회 API
-//            // ResultList
-//            TypedQuery<Member> query = em.createQuery("select m from Member m", Member.class);
-//            List<Member> resultList = query.getResultList();
-//
-//            for (Member member1 : resultList) {
-//                System.out.println("member1 = " + member1);
-//            }
-//            // SingleResult
-//            TypedQuery<Member> query = em.createQuery("select m from Member m where m.id = 10", Member.class);
-//            Member result = query.getSingleResult();
-//
-//            System.out.println("result = " + result);
+//            // 엔티티 프로젝션
+//            // 영속성 컨텍스트에서 관리됨
+//            List<Team> result = em.createQuery("select m.team from Member m", Team.class)
+//                    .getResultList(); // join query 나감
 
-            // 파라미터 바인딩 -> 이름 기준, 위치 기준 지원하는데 위치 기준은 쓰지 않는걸 권장
-            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
-            query.setParameter("username", "member1");
-            Member result = query.getSingleResult();
-            System.out.println("result = " + result.getUsername());
+//            // 임베디드 타입 프로젝션 -> 임베디드 타입만으로는 안되고 소속된 엔티티로부터 시작해야 함
+//            em.createQuery("select o.address from Order o", Address.class)
+//                    .getResultList();
+
+//            // 스칼라 타입 프로젝션
+//            List<Object[]> resultList = em.createQuery("select m.username, m.age from Member m")
+//                    .getResultList();
+
+//            // object[] 타입으로 조회 -> 이 과정을 생략하는 법은 List<Object[]>
+//            Object o = resultList.get(0);
+//            Object[] result = (Object[]) o;
+
+//            Object[] result = resultList.get(0);
+//            System.out.println("result = " + result[0]);
+//            System.out.println("age = " + result[1]);
+
+            // new 명령어로 조회
+            List<MemberDto> result = em.createQuery("select new jpql.MemberDto(m.username, m.age) from Member m", MemberDto.class)
+                    .getResultList();
+
+            MemberDto memberDto = result.get(0);
+            System.out.println("memberDto.getUsername() = " + memberDto.getUsername());
+            System.out.println("memberDto.getAge() = " + memberDto.getAge());
 
             tx.commit();
         } catch (Exception e) {
