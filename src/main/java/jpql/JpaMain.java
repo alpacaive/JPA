@@ -19,34 +19,44 @@ public class JpaMain {
 
             Team team = new Team();
             team.setName("teamA");
+
             em.persist(team);
 
             Member member = new Member();
             member.setUsername("teamA");
             member.setAge(10);
             member.setType(MemberType.ADMIN);
+
             member.setTeam(team);
+
             em.persist(member);
 
             em.flush();
             em.clear();
 
-//            String query = "select m from Member m inner join m.team"; // 내부 조인
-//            String query = "select m from Member m left outer join m.team"; // 외부 조인
-//            String query = "select m from Member m, Team t where m.username = t.name"; // 세타 조인
-//            String query = "select m from Member m left join m.team t on t.name = 'teamA'"; // 조인 대상 필터링
-//            String query = "select m from Member m left join Team t on m.username = t.name"; // 연관관계 없는 엔티티 외부 조인
+//             // 기본 case 식
+//            String query =
+//                    "select " +
+//                            "case when m.age <= 10 then '학생요금' " +
+//                            "     when m.age >= 10 then '경로요금' " +
+//                            "     else '일반요금' " +
+//                            "end " +
+//                    "from Member m";
+//
+//            List<String> result = em.createQuery(query, String.class).getResultList();
 
-//            String query = "select mm.age, mm.username" +
-//                    "from (select m.age, m.username from Member m) as mm";  // From 절의 서브쿼리는 현재 JPQL 에서 불가능하다
+//            // COALESCE : 하나씩 조회해서 null이 아니면 반환
+//            String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
+            // NULLIF : 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
+            String query = "select nullif(m.username, '관리자') from Member m";
 
-            String query = "select m.username, 'HELLO', TRUE From Member m where m.type = :userType"; // JPQL 타입 표현과 기타식
 
-            List<Object[]> result = em.createQuery(query)
-                    .setParameter("userType", MemberType.ADMIN)
-                    .getResultList();
+            List<String> result = em.createQuery(query, String.class).getResultList();
 
-            System.out.println("result = " + result.size());
+            for (String s : result) {
+                System.out.println("s = " + s);
+            }
+
 
             tx.commit();
         } catch (Exception e) {
