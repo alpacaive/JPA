@@ -34,21 +34,18 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-//             // 기본 case 식
-//            String query =
-//                    "select " +
-//                            "case when m.age <= 10 then '학생요금' " +
-//                            "     when m.age >= 10 then '경로요금' " +
-//                            "     else '일반요금' " +
-//                            "end " +
-//                    "from Member m";
-//
-//            List<String> result = em.createQuery(query, String.class).getResultList();
-
-//            // COALESCE : 하나씩 조회해서 null이 아니면 반환
-//            String query = "select coalesce(m.username, '이름 없는 회원') from Member m";
-            // NULLIF : 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
-            String query = "select nullif(m.username, '관리자') from Member m";
+//            // concat
+//            String query = "select concat('a', 'b') from Member m";
+//            // subString
+//            String query = "select substring(m.username, 2, 3) from Member m ";
+//            // locate
+//            String query = "select locate('de', 'abcdefg') from Member m";
+//            // size -> 컬렉션 크기
+//            String query = "select size(t.members) from Team t";
+//            // index -> 안쓰는게 좋다
+//            String query = "select index(t.members) from Team t";
+            // 사용자 정의 함수 호출
+            String query = "select function('group_concat', m.username) FROM Member m";
 
 
             List<String> result = em.createQuery(query, String.class).getResultList();
