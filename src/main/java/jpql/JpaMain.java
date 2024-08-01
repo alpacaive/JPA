@@ -24,6 +24,7 @@ public class JpaMain {
             Member member = new Member();
             member.setUsername("teamA");
             member.setAge(10);
+            member.setType(MemberType.ADMIN);
             member.setTeam(team);
             em.persist(member);
 
@@ -36,10 +37,13 @@ public class JpaMain {
 //            String query = "select m from Member m left join m.team t on t.name = 'teamA'"; // 조인 대상 필터링
 //            String query = "select m from Member m left join Team t on m.username = t.name"; // 연관관계 없는 엔티티 외부 조인
 
-            String query = "select mm.age, mm.username" +
-                    "from (select m.age, m.username from Member m) as mm";  // From 절의 서브쿼리는 현재 JPQL 에서 불가능하다
+//            String query = "select mm.age, mm.username" +
+//                    "from (select m.age, m.username from Member m) as mm";  // From 절의 서브쿼리는 현재 JPQL 에서 불가능하다
 
-            List<Member> result = em.createQuery(query, Member.class)
+            String query = "select m.username, 'HELLO', TRUE From Member m where m.type = :userType"; // JPQL 타입 표현과 기타식
+
+            List<Object[]> result = em.createQuery(query)
+                    .setParameter("userType", MemberType.ADMIN)
                     .getResultList();
 
             System.out.println("result = " + result.size());
