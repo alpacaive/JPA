@@ -34,7 +34,10 @@ public class JpaMain {
 //            String query = "select m from Member m left outer join m.team"; // 외부 조인
 //            String query = "select m from Member m, Team t where m.username = t.name"; // 세타 조인
 //            String query = "select m from Member m left join m.team t on t.name = 'teamA'"; // 조인 대상 필터링
-            String query = "select m from Member m left join Team t on m.username = t.name"; // 연관관계 없는 엔티티 외부 조인
+//            String query = "select m from Member m left join Team t on m.username = t.name"; // 연관관계 없는 엔티티 외부 조인
+
+            String query = "select mm.age, mm.username" +
+                    "from (select m.age, m.username from Member m) as mm";  // From 절의 서브쿼리는 현재 JPQL 에서 불가능하다
 
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
