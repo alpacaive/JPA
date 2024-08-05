@@ -2,6 +2,7 @@ package jpql;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,42 +19,43 @@ public class JpaMain {
         try {
 
             Team team = new Team();
-            team.setName("teamA");
-
             em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("teamA");
-            member.setAge(10);
-            member.setType(MemberType.ADMIN);
+            Member member1 = new Member();
+            member1.setUsername("관리자1");
+            member1.setTeam(team);
+            em.persist(member1);
 
-            member.setTeam(team);
-
-            em.persist(member);
+            Member member2 = new Member();
+            member2.setUsername("관리자2");
+            member2.setTeam(team);
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-//            // concat
-//            String query = "select concat('a', 'b') from Member m";
-//            // subString
-//            String query = "select substring(m.username, 2, 3) from Member m ";
-//            // locate
-//            String query = "select locate('de', 'abcdefg') from Member m";
-//            // size -> 컬렉션 크기
-//            String query = "select size(t.members) from Team t";
-//            // index -> 안쓰는게 좋다
-//            String query = "select index(t.members) from Team t";
-            // 사용자 정의 함수 호출
-            String query = "select function('group_concat', m.username) FROM Member m";
+//            // 상태 필드 : 경로 탐색의 끝. 탐색 더이상 불가
+//            String query = "select m.username From Member m";
+//
+//            // 단일 값 연관 경로 : 묵시적 내부 조인(inner join) 발생, 탐색 더 가능 -> 실무에서는 묵시적 내부 조인이 일어나게 짜면 안된다. 운영 어려워진다
+//            String query = "select m.team From Member m";
+//
+//            List<String> result = em.createQuery(query, String.class)
+//                    .getResultList();
+//
+//            for (String s : result) {
+//                System.out.println("s = " + s);
+//            }
 
+            // 컬렉션 값 연관 경로 : 묵시적 내부 조인 발생, 탐색 더이상 불가능
+            String query = "select t.members From Team t";
 
-            List<String> result = em.createQuery(query, String.class).getResultList();
+            List<Collection> result = em.createQuery(query, Collection.class)
+                    .getResultList();
 
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Object o : result) {
+                System.out.println("o = " + o);
             }
-
 
             tx.commit();
         } catch (Exception e) {
