@@ -41,16 +41,22 @@ public class JpaMain {
             member3.setTeam(teamB);
             em.persist(member3);
 
-            em.flush();
-            em.clear();
+//            em.flush();
+//            em.clear();
 
-            List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
-                    .setParameter("username", "회원1")
-                    .getResultList();
+            // FLUSH 자동 호출
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
 
-            for (Member member : resultList) {
-                System.out.println("member = " + member);
-            }
+            System.out.println("resultCount = " + resultCount);
+
+            // FLUSH 된다고 CLEAR 되는게 아니므로 영속성 컨텍스트에는 age = 0으로 되어있음 = 여기서 0 나옴
+            // -> clear 하고 다시 디비에서 불러와야 한다
+            System.out.println(member1.getAge());
+            System.out.println(member2.getAge());
+            System.out.println(member3.getAge());
+
+
 
             tx.commit();
         } catch (Exception e) {
