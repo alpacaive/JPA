@@ -44,44 +44,30 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-//            // 엔티티 페치조인
-//            String query = "select m From Member m join fetch m.team";
-//
-//            List<Member> result = em.createQuery(query, Member.class)
-//                    .getResultList();
-//
-//            for (Member member : result) {
-//                System.out.println("member = " + member.getUsername() + ", " + member.getTeam().getName());
-//            }
+//            // 엔티티 직접 사용 - 기본 키 값
+//            String query = "select m from Member m where m.id = :member";
 
-//            // 컬렉션 페치 조인 → 하이버네이트6 부터는 DISTINCT 명령어를 사용하지 않아도 애플리케이션에서 중복 제거가 자동으로 적용된다
-//            String query = "select distinct t From Team t join fetch t.members";
-//
-//            List<Team> result = em.createQuery(query, Team.class)
-//                    .getResultList();
-//
-//            System.out.println("result = " + result.size());
-//
-//            for (Team team : result) {
-//                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
-//                for (Member member : team.getMembers()) {
-//                    System.out.println("-> member = " + member);
-//                }
-//            }
+            //            // 엔티티를 파라미터로 전달
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("member", member1)
+//                    .getSingleResult();
 
-            // 일반 조인 -> 팀 데이터만 가져옴 페치 조인이 아니기 때문 (페치 조인이랑 차이 볼려고 작성해봄)
-            String query = "select t From Team t join t.members m";
+//            // 식별자를 직접 전달
+//            Member findMember = em.createQuery(query, Member.class)
+//                    .setParameter("member", member1.getId())
+//                    .getSingleResult();
 
-            List<Team> result = em.createQuery(query, Team.class)
+//            System.out.println("findMember = " + findMember);
+
+            // 엔티티 직접 사용 - 왜래 키 값
+            String query = "select m from Member m where m.team = :team";
+
+            List<Member> members = em.createQuery(query, Member.class)
+                    .setParameter("team", teamA)
                     .getResultList();
 
-            System.out.println("result = " + result.size());
-
-            for (Team team : result) {
-                System.out.println("team = " + team.getName() + " | members = " + team.getMembers().size());
-                for (Member member : team.getMembers()) {
-                    System.out.println("-> member = " + member);
-                }
+            for (Member member : members) {
+                System.out.println("member = " + member);
             }
 
             tx.commit();
